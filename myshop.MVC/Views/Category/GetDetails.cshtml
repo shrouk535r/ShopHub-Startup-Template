@@ -1,0 +1,261 @@
+﻿@model myshop.BLL.DTO.CategoryDetailsDto
+
+@{
+    ViewBag.PageTitle = "Category Management";
+    ViewBag.CardTitle = "Category Details";
+}
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    /* Card */
+    .custom-card {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid #d0d7de;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        padding: 20px;
+    }
+
+    .custom-card-header {
+        background: #f1f5fb;
+        border-bottom: 1px solid #d0d7de;
+        padding: 18px 0;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .custom-card-header h4 {
+            color: #1e3a8a; /* أزرق فخم */
+            font-weight: 700;
+            margin: 0;
+        }
+
+    /* Inputs */
+    .form-control {
+        background-color: #fefefe;
+        border: 1px solid #a0aec0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        color: #1e3a8a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+        .form-control:disabled {
+            background-color: #f5f5f5;
+            color: #6b7280;
+        }
+
+    .products-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8fbff;
+        border: 1px solid #d9e4f5;
+        border-radius: 18px;
+    }
+
+
+    .products-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+
+    .products-title {
+        color: #002f7a;
+        font-weight: 700;
+        margin: 0;
+    }
+
+
+    .add-product-btn {
+        background: white;
+        color: #0d6efd;
+        border: 1px solid #0d6efd;
+        border-radius: 12px;
+        padding: 8px 15px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+
+        .add-product-btn:hover {
+            background: #cfe1fc;
+            color: #042e6b;
+        }
+
+    .product-small-card img{
+        width:75px;
+        height:75px;
+    }
+    /* Empty products */
+    .empty-products {
+        text-align: center;
+        padding: 25px;
+        color: #64748b;
+        background: white;
+        border-radius: 14px;
+    }
+
+
+        .empty-products i {
+            font-size: 25px;
+            margin-bottom: 10px;
+            color: #93c5fd;
+        }
+    /* Buttons */
+    .btn-primary {
+        padding: 9px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+        background: linear-gradient(135deg,#00c6ff,#0d6efd,#004bba);
+        color: white;
+        border: none;
+        box-shadow: 0 10px 25px rgba(13,110,253,.25);
+    }
+
+        .btn-primary:hover {
+            box-shadow: 0 15px 35px rgba(13,110,253,.35);
+        }
+
+    .btn-outline-secondary {
+        border-radius: 8px;
+        padding: 9px 18px;
+        border-color: #93c5fd;
+        font-weight: 600;
+        color: #1e3a8a;
+        text-decoration: none;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #bfdbfe;
+            color: #1e40af;
+        }
+
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="custom-card">
+
+            <div class="custom-card-header">
+                <h4><i class="fa-regular fa-file-lines text-blue"></i> @ViewBag.CardTitle</h4>
+            </div>
+
+            <div class="card-body p-4">
+
+                <form asp-action="Edit" method="get">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- Name -->
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">
+                            <i class="fa-solid fa-tag me-1"></i> Category Name
+                        </label>
+                        <input asp-for="Name" class="form-control" disabled />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label">
+                            <i class="fa-solid fa-align-left me-1"></i> Description
+                        </label>
+                        <textarea asp-for="Description" rows="4" class="form-control" disabled>@Html.Raw(Model.Description?.Replace("<", "").Replace(">", ""))</textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <!-- Created Time -->
+                    <div class="mb-4">
+                        <label asp-for="CreatedTime" class="form-label">
+                            <i class="fa-regular fa-calendar"></i> Created Time
+                        </label>
+                        <input asp-for="CreatedTime"class="form-control" type="datetime-local" disabled></input>
+                        <span asp-validation-for="CreatedTime" class="text-danger"></span>
+                    </div>
+                    @* Products *@
+                    <div class="products-section">
+
+                        <div class="products-header">
+
+                            <h5 class="products-title">
+                                <i class="fa-solid fa-box-open me-2"></i>
+                                Products
+                            </h5>
+
+
+                            <a asp-controller="Product"
+                               asp-action="Create"
+                               asp-route-categoryid="@Model.Id"
+                               class="add-product-btn">
+
+                                <i class="fa-solid fa-plus me-1"></i>
+                                Add Product
+
+                            </a>
+
+                        </div>
+
+
+                        @if (Model.Products != null && Model.Products.Any())
+                        {
+                            <div class="row g-3">
+
+                                @foreach (var product in Model.Products)
+                                {
+                                    <div class="col-md-2">
+                                        <div class="product-small-card">
+
+                                            <img src="~/@product.Img"
+                                                 class="product-small-img" />
+
+                                            <div class="product-small-name fw-bolder fs-6">
+                                                @product.Name
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-products">
+
+                                <i class="fa-solid fa-box-open d-block"></i>
+
+                                <div>
+                                    No products added yet
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+                    <br />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fa-solid fa-arrow-left me-1"></i> Back
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-pen me-2"></i> Edit Category
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,15 @@
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\bin\Debug\net8.0\myshop.DAL.deps.json
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\bin\Debug\net8.0\myshop.DAL.runtimeconfig.json
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\bin\Debug\net8.0\myshop.DAL.dll
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\bin\Debug\net8.0\myshop.DAL.pdb
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.csproj.AssemblyReference.cache
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.GeneratedMSBuildEditorConfig.editorconfig
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.AssemblyInfoInputs.cache
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.AssemblyInfo.cs
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.csproj.CoreCompileInputs.cache
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.sourcelink.json
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.dll
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\refint\myshop.DAL.dll
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.pdb
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\myshop.DAL.genruntimeconfig.cache
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.DAL\obj\Debug\net8.0\ref\myshop.DAL.dll

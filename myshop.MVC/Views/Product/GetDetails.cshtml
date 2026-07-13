@@ -1,0 +1,194 @@
+@model myshop.BLL.DTO.ProductDetailsDto
+
+@{
+    ViewData["Title"] = "GetDetails";
+    ViewBag.CardTitle = "Product Details";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<style>
+    /* Card Container: Soft, shadow-matched to your page */
+    .product-card-large {
+        background: linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+        border: 1px solid #d9e4f5;
+        border-radius: 32px;
+        box-shadow: 0 15px 40px rgba(13,110,253,.10), 0 5px 15px rgba(0,47,122,.06);
+        overflow: visible !important;
+    }
+
+    .product-image-wrapper {
+        position: relative;
+        overflow: visible;
+    }
+
+
+    .product-card-img-large {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 24px;
+    }
+
+
+    /* Floating preview */
+    .product-preview {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        /* width: 500px; */
+        /* height: 500px; */
+        transform: translate(-50%, -50%) scale(.8);
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 25px 60px rgba(0,0,0,.35);
+        opacity: 0;
+        visibility: hidden;
+        transition: .35s ease;
+        z-index: 9999;
+    }
+
+
+    .product-image-wrapper:hover .product-preview {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+
+    .product-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 25px;
+    }
+    /* Price Badge: Using your Hero Blue for high-impact contrast */
+    .product-price-badge {
+        background: linear-gradient( 135deg, #ffcc4d, #ff9f1c );
+        color: white;
+        font-weight: 700;
+        padding: 0.6rem 1.4rem;
+        border-radius: 20px;
+    }
+
+    /* Category Badge: Using your light background tones (#eef2f7) */
+    .product-category-badge {
+        background-color: #eef2f7;
+        color: #002f7a; /* Deep blue text for legibility */
+        border: 1px solid #c3dafe;
+        padding: 0.5rem 1.2rem;
+        border-radius: 14px;
+        font-weight: 600;
+    }
+
+    /* Buttons Container */
+    .product-actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 30px;
+    }
+
+    /* Back Button */
+    .product-back-btn {
+        flex: 1;
+        background: rgba(255,255,255,.7);
+        border: 2px solid #d9e4f5;
+        color: #004bba;
+        border-radius: 18px;
+        padding: 0.9rem;
+        font-weight: 600;
+        transition: .3s ease;
+        backdrop-filter: blur(8px);
+    }
+
+        .product-back-btn:hover {
+            background: #eef5ff;
+            border-color: #0d6efd;
+            color: #002f7a;
+            transform: translateY(-3px);
+        }
+
+    /* Edit Button */
+    .product-edit-btn {
+        flex: 1;
+        background: linear-gradient(135deg,#00c6ff,#0d6efd,#004bba);
+        border: none;
+        color: white;
+        border-radius: 18px;
+        padding: .9rem;
+        font-weight: 700;
+        transition: .35s;
+        box-shadow: 0 10px 25px rgba(13,110,253,.25);
+    }
+
+        .product-edit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(13,110,253,.35);
+        }
+
+    /* Icons */
+    .product-actions i {
+        font-size: 1rem;
+    }
+    </style>
+<!-- Centered Flex Container -->
+<div class="container d-flex justify-content-center align-items-center py-5">
+
+    <!-- Large Card Container (Max width caps it so the image doesn't distort on huge monitors) -->
+    <div class="card product-card-large w-100" style="max-width: 650px;">
+
+        <!-- Large Product Image -->
+        <div class="product-image-wrapper">
+            <img id="ImagePreview" src="~/@Model.Img"
+             class="card-img-top product-card-img-large" alt="@Model.Name">
+
+            <div class="product-preview">
+                <img id="ImagePreview"  src="~/@Model.Img" alt="@Model.Name">
+            </div>
+        </div>
+
+        @* <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+             class="card-img-top product-card-img-large" alt="Product Name"> *@
+
+        <div class="card-body px-3 pb-2 pt-4">
+            <!-- Title and Price Row -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class=" fw-bold mb-0 display-6">
+                    @Model.Name
+                </h2>
+                <span class="product-price-badge">
+                    @Model.Price $
+                </span>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-4">
+                <span class="product-category-badge">
+                    @Model.CategoryName
+                </span>
+            </div>
+
+            <!-- Full Description (Removed line-clamp so the user can read the whole thing) -->
+            <p class="card-text text-muted mb-5" style="font-size: 1.05rem; line-height: 1.6;">
+                @Model.Description
+            </p>
+
+            <div class="product-actions">
+
+                <a asp-action="Index" class="btn product-back-btn">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to List
+                </a>
+
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn product-edit-btn">
+                    <i class="fas fa-pen me-2"></i>
+                    Edit Product
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</div>
