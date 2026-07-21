@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using myshop.BLL.DTO;
 using myshop.BLL.Services.IServices;
 using myshop.DAL.UnitOfWork.Interfaces;
@@ -7,6 +8,7 @@ using myshop.Entities.Models;
 
 namespace myshop.MVC.Areas.Admin.Controllers
 {
+    [Authorize(Policy = "RequireAdminOnly")]
     public class CategoryController : Controller
     {
         private ICategoryService _categoryServices;

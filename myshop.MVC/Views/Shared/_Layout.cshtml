@@ -1,9 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<myshop.Entities.Models.ApplicationUser> SignInManager
+@inject UserManager<myshop.Entities.Models.ApplicationUser> UserManager
+@ViewData["Title"]=Users
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - myshop.MVC</title>
+    <title>@ViewData["Title"]</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -55,6 +59,7 @@
             font-weight: 600;
             transition: .3s;
             box-shadow: 0 4px 12px rgba(0,0,0,.15);
+            border: none;
         }
 
             .nav-link-box:hover {
@@ -94,7 +99,7 @@
             <div class="container">
 
                 <a class="navbar-brand nav-link-box home-box"
-                   asp-controller="Product"
+                   asp-controller="Home"
                    asp-action="Index">
                     myshop.Web
                 </a>
@@ -110,24 +115,71 @@
 
                     <ul class="navbar-nav ms-auto">
 
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-box"
-                               asp-controller="Product"
-                               asp-action="Index">
-                                Products
-                            </a>
-                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-box"
+                                       asp-controller="Category"
+                                       asp-action="Index">
+                                        Categories
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-box"
+                                       asp-controller="Product"
+                                       asp-action="Index">
+                                        Products
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-box"
+                                    asp-controller="User" 
+                                    asp-action="Index">
+                                    Users
+                                    </a>
+                                </li>
+                            }
 
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-box"
-                               asp-controller="Category"
-                               asp-action="Index">
-                                Categories
-                            </a>
-                        </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav ms-auto align-items-center">
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                        
+                            <li class="nav-item mx-2 text-dark fw-bold">
+                                @{var appUser = await UserManager.GetUserAsync(User);}
+                                Hello, @appUser.FullName
+                            </li>
+
+                            <li class="nav-item">
+                                <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="nav-link nav-link-box bg-danger" style="background: linear-gradient(135deg,#ff416c,#ff4b2b) !important;">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-box"
+                                   asp-controller="Account"
+                                   asp-action="Login">
+                                    Login
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-box"
+                                   asp-controller="Account"
+                                   asp-action="Register">
+                                    Register
+                                </a>
+                            </li>
+                        }
 
                     </ul>
-
                 </div>
 
             </div>

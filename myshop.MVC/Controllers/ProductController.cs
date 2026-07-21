@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +13,7 @@ using myshop.Entities.ViewModels;
 
 namespace myshop.MVC.Areas.Admin.Controllers
 {
+    [Authorize(Policy = "RequireAdminOnly")]
     public class ProductController : Controller
     {
         private readonly IWebHostEnvironment _webHostEnvironment;

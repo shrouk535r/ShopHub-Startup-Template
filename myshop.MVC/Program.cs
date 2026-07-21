@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using myshop.BLL;
+using myshop.DAL.Data;
 using myshop.DataAccess;
 using myshop.Entities.Models;
 using Stripe;
@@ -15,6 +16,19 @@ builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.AddBLL(builder.Configuration);
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 builder.Services.AddHttpContextAccessor();
 
 
@@ -23,8 +37,11 @@ builder.Services.AddSession();
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+    await RoleSeeder.SeedRolesAndAdmin(services);
+
 }
 
 
@@ -57,7 +74,7 @@ app.MapRazorPages();
 //    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Product}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
 

@@ -25,7 +25,8 @@ namespace myshop.DAL
             ));
             services.AddIdentity<ApplicationUser, IdentityRole>(
                 options => options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(4)
-                ).AddDefaultTokenProviders().AddDefaultUI()
+                ).AddDefaultTokenProviders()
+                .AddDefaultUI() 
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
