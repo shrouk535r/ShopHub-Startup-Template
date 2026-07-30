@@ -121,10 +121,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Product.Img" class="form-label">
+                    <label asp-for="File" class="form-label">
                         <i class="fa-solid fa-image me-1"></i> Product Image
                     </label>
-                    <input type="file" name="file" id="imgfile" class="form-control h-auto" onchange="fillimg(event);" />
+                    <input asp-for="File" type="file" name="file" id="imgfile" class="form-control h-auto" onchange="fillimg(event);" />
+                    <span asp-validation-for="File" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
@@ -134,7 +135,7 @@
                     <br />
                     <select asp-for="Product.CategoryId" class="w-100 form-select" asp-items="Model.CategoryList">
                         <option value="">-- Select Category --</option>
-                    </select>
+                    </select>                    
                     <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
@@ -148,7 +149,7 @@
             </form>
 
             <div class="mt-4 text-center">
-                <img id="ImagePreview" />
+                <img src="~/Images/landscape-placeholder-svgrepo-com.svg" id="ImagePreview" />
             </div>
 
         </div>
@@ -160,6 +161,7 @@
 
     <script>
         var fillimg = function(event){
+            debugger;
             var imgholder = document.getElementById("ImagePreview");
             imgholder.src = URL.createObjectURL(event.target.files[0]);
         }

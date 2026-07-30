@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using myshop.BLL.DTO;
 using myshop.BLL.Services.IServices;
+using myshop.DAL.Enums;
 using myshop.DAL.UnitOfWork.Interfaces;
 using myshop.Entities.Models;
 using System;
@@ -32,6 +33,38 @@ namespace myshop.BLL.Services
             var productsDto = products.Select(P => _mapper.Map<ProductDto>(P)).ToList();
             return productsDto;
         }
+        public async Task<ICollection<ProductDto>> GetFilteredAndSortedProducts(int? Pagenum,SortEnum? order,string SearchedText)
+        {
+            int pageSize = 10;
+            var products = await _unitOfWork.ProductRepository.GetAll(p => p.Category);
+            int skippedPages = (Pagenum??1 - 1) * pageSize;
+            switch(order)
+            {
+                case SortEnum.NameAsec:
+                    products= products.OrderBy(p => p.Name).ToList();
+                    break;
+                case SortEnum.NameDesc:
+                    products = products.OrderByDescending(p => p.Name).ToList();
+                    break;
+                case SortEnum.PriceAsec:
+                    products = products.OrderBy(p => p.Price).ToList();
+                    break;
+                case SortEnum.PriceDesc:
+                    products = products.OrderByDescending(p => p.Price).ToList();
+                    break;
+                default:
+                    break;
+            }
+            if (!string.IsNullOrEmpty(SearchedText))
+                products = products.Where(p => p.Name.ToLower().Contains(SearchedText.ToLower()) || p.Description.ToLower().Contains(SearchedText.ToLower())).ToList();
+            products = products.Skip(skippedPages).Take(pageSize).ToList();
+            var productsDto = products.Select(P => _mapper.Map<ProductDto>(P)).ToList();
+
+            return productsDto;
+        }
+        
+
+
         public async Task<ProductDetailsDto> GetProductDetails(int ProductId)
         {
             var product=await _unitOfWork.ProductRepository.GetById(ProductId, p => p.Category);
@@ -63,7 +96,31 @@ namespace myshop.BLL.Services
             _unitOfWork.ProductRepository.Update(product);
             await _unitOfWork.Save();
         }
+        public bool ValidateImageFile(IFormFile File, out string ErrMsg)
+        {
+            ErrMsg = "";
+            if (File != null)
+            {
+                
+                float fileLenInMb = File.Length / (1024f * 1024f);
+                string fileType = File.ContentType.Split('/')[0];
+                string fileExt = File.ContentType.Split('/')[1].ToLower();
+                if (fileLenInMb > 2)
+                {
+                    ErrMsg = "Invalid file. The file must not exceed 2 MB.";
+                    return false;
+                }
+                else if ((fileType != "image") || (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "png" && fileExt != "webp"))
+                {
+                    ErrMsg = "Invalid file. The file must be in JPG, JPEG, PNG, or WebP format.";
+                    return false;
+                }
+                
+            }
+           
+            return true;
 
+        }
         public async Task Delete(int ProductId)
         {
             var product = await _unitOfWork.ProductRepository.GetById(ProductId);

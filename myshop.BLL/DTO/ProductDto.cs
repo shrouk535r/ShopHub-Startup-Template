@@ -17,5 +17,8 @@ namespace myshop.BLL.DTO
         public decimal Price { get; set; }
         [DisplayName("Category Name")]
         public string CategoryName {  get; set; }
+        [DisplayName("Image")]
+        public string Img { get; set; }
+
     }
 }

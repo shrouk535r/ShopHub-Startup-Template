@@ -109,7 +109,7 @@
             <form asp-action="Edit" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Product.Id" />
                 <input type="hidden" asp-for="Product.Img" />
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                 <div class="mb-3">
                     <label asp-for="Product.Name" class="form-label">
@@ -136,10 +136,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Product.Img" class="form-label">
+                    <label asp-for="File" class="form-label">
                         <i class="fa-solid fa-image me-1"></i> Product Image
                     </label>
-                    <input type="file" name="file" id="imgfile" class="form-control" onchange="fillimg(event);" />
+                    <input asp-for="File" type="file" value="@Model.Product.Img" name="file" id="imgfile" class="form-control" onchange="fillimg(event);" />
+                    <span asp-validation-for="File" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
@@ -161,11 +162,20 @@
                     </button>
                 </div>
             </form>
-
-            <div class="mt-4 text-center">
-                <img id="ImagePreview" src="~/@Model.Product.Img" />
-            </div>
-
+            @{
+                if (Model.Product.Img != null)
+                {
+                    <div class="mt-4 text-center">
+                        <img id="ImagePreview" src="~/@Model.Product.Img" />
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-4 text-center">
+                        <img src="~/Images/landscape-placeholder-svgrepo-com.svg" id="ImagePreview" />
+                    </div>
+                }
+            }
         </div>
     </div>
 </div>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+
 using Microsoft.AspNetCore.Http;
 using myshop.BLL.Services.IServices;
 using myshop.DataAccess;
@@ -18,7 +19,7 @@ namespace myshop.BLL.Services
         public FileService(IWebHostEnvironment webHostEnvironment)
         {
             _webHostEnvironment = webHostEnvironment;
-        }
+        } 
         public string? uploadFile(IFormFile file, string path)
         {
             string RootPath = _webHostEnvironment.WebRootPath;

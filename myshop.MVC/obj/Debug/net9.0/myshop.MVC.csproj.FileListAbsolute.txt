@@ -620,3 +620,4 @@ E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\obj\Debug\net9.0\compressed\5t01d75zwi-4eaur3sdcu.gz

@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 namespace AddressBook.BLL.Mapping
 {
-    public class MappingProfile:Profile
+    public class MappingProfile : Profile
     {
-
         public MappingProfile()
         {
             CreateMap<Product, ProductDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category == null ? "" : src.Category.Name));
             CreateMap<Product, ProductDetailsDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category == null ? "" : src.Category.Name));
-            CreateMap<Category, CategoryDto>();
+            CreateMap<Category, CategoryDto>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Products != null && src.Products.Any() ? src.Products.FirstOrDefault().Img : "/Images/Categories/DefaultCategory.jpg"));
             CreateMap<Product, ProductInCategoryDto>();
             CreateMap<Category, CategoryDetailsDto>();
-                
+
             //CreateMap<AddressBookEntryCreateDto, AddressBookEntry>()
             //    .ForMember(dest => dest.photo, opt => opt.Ignore());
 
@@ -33,8 +33,6 @@ namespace AddressBook.BLL.Mapping
             //CreateMap<Job, JobDto>();
             //CreateMap<JobDto, Job>()
             //    .ForMember(dest => dest.Id, opt => opt.Ignore());
-
-
         }
     }
 }

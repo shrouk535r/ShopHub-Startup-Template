@@ -71,16 +71,23 @@ namespace myshop.MVC.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductVM productVM,IFormFile file)
+        public async Task<IActionResult> Create(ProductVM productVM)
         {
 
+            if (!_productService.ValidateImageFile(productVM.File, out string err))
+                ModelState.AddModelError("File", err);
             if (ModelState.IsValid)
             {
-                await _productService.Create(productVM.Product, file);
+                await _productService.Create(productVM.Product, productVM.File);
                 TempData["Create"] = "Item has Created Successfully";
                 return RedirectToAction("Index");
             }
-            return View(productVM.Product);
+            productVM.CategoryList = (await _unitOfWork.CategoryRepository.GetAll()).Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString(),
+            });
+            return View(productVM);
         }
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
@@ -97,23 +104,29 @@ namespace myshop.MVC.Areas.Admin.Controllers
                 {
                     Text = x.Name,
                     Value = x.Id.ToString()
-                })
+                }),
             };
 
             return View(productVM);
         }
         
         [HttpPost]
-        public async Task<IActionResult> Edit(ProductVM productVM, IFormFile? file)
+        public async Task<IActionResult> Edit(ProductVM productVM)
         {
+            if (!_productService.ValidateImageFile(productVM.File, out string err))
+                ModelState.AddModelError("File", err);
             if (ModelState.IsValid)
             {
-                await _productService.Edit(productVM.Product, file);
+                await _productService.Edit(productVM.Product, productVM.File);
                 TempData["Update"] = "Data has Updated Successfully";
                 return RedirectToAction("Index");
             }
-
-            return View(productVM.Product);
+            productVM.CategoryList = (await _unitOfWork.CategoryRepository.GetAll()).Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString(),
+            });
+            return View(productVM);
         }
         
         [HttpDelete]

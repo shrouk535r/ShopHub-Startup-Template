@@ -73,7 +73,12 @@ namespace ShopHub.MVC.Controllers
                     {
                         return Redirect(returnUrl);
                     }
-                    return RedirectToAction("Index", "Home");
+                    
+                    if(User.IsInRole("Customer"))
+                        return RedirectToAction("Index", "Home");
+                    else if(User.IsInRole("Admin"))
+                        return RedirectToAction("Index", "Product");
+                    
                 }
                 if(result.IsLockedOut)
                     ModelState.AddModelError(string.Empty, "The Account is Locked.");

@@ -26,6 +26,7 @@ E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\wwwroot\css\site.css
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\wwwroot\lib\bootstrap\dist\js\bootstrap.js
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\wwwroot\Images\landscape-placeholder-svgrepo-com.svg
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
 E:\Fullstack\projects\E-Commerce mvc\shopHub\ShopHub-Startup-Template\myshop.MVC\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
@@ -182,11 +183,17 @@ wwwroot\customer\assets\favicon.ico
 wwwroot\customer\css\styles.css
 wwwroot\customer\js\scripts.js
 wwwroot\favicon.ico
+wwwroot\Images\Categories\DefaultCategory.jpg
+wwwroot\Images\landscape-placeholder-svgrepo-com.svg
+wwwroot\Images\logos\Logo01.png
+wwwroot\Images\Products\00817853-f53f-4b8a-bda5-b93dc6de1ad2.png
 wwwroot\Images\Products\02a7ea31-1096-4acc-99ad-d708a75c6688.jpg
 wwwroot\Images\Products\035afc1e-b77f-4b5b-9eb7-7d7991bea349.jpg
+wwwroot\Images\Products\098bd8ed-9007-4213-b09e-98afbc09f33b.webp
 wwwroot\Images\Products\1198e589-c4ff-45a6-81da-6bb51a1a23be.jpg
 wwwroot\Images\Products\16334666-9418-4950-a62a-d40d855aa437.jpg
 wwwroot\Images\Products\1d515caa-90e2-4029-84c7-29cc8e34da57.webp
+wwwroot\Images\Products\1d97be2e-176f-4a2a-bfa5-68b0e41c7f7e.jpg
 wwwroot\Images\Products\248aaba6-43c9-442d-82f9-b4e0a1b89aa6.jpg
 wwwroot\Images\Products\3ab06290-2a1d-4abd-983b-66141b925fdc.jpg
 wwwroot\Images\Products\40400314-7c8b-4bdb-b7b7-cec4f0cb861d.png
@@ -203,7 +210,6 @@ wwwroot\Images\Products\7462ab44-1ae1-490d-bf55-c3c550ce72c2.jpg
 wwwroot\Images\Products\7d3c02d2-1d67-4ab3-aec5-82ac69cf1974.jpg
 wwwroot\Images\Products\85c32add-7f39-465b-8a15-c6cb97a47c32.jpg
 wwwroot\Images\Products\87789d13-f31e-4bbd-9343-a5ad90396fad.webp
-wwwroot\Images\Products\882b774e-5df3-4ed9-8118-63d4bd2165ee.webp
 wwwroot\Images\Products\8b3492a3-7fbd-4356-adaf-532482a6e48e.jpg
 wwwroot\Images\Products\8ede2b3b-ae2d-4b87-a15e-be0298d3f3e8.jpg
 wwwroot\Images\Products\8fc0a8d0-f1c0-4bca-9b0a-2cebff026cda.png
