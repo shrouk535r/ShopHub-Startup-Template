@@ -33,7 +33,9 @@ builder.Services.AddHttpContextAccessor();
 
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+    options.Cookie.IsEssential = true
+    );
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {

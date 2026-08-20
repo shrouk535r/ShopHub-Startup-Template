@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using myshop.BLL.Services.IServices;
 using myshop.DAL.Enums;
 using myshop.Entities.Models;
 using myshop.MVC.ViewModels;
+using System.Security.Claims;
 
 namespace ShopHub.MVC.Controllers
 {
@@ -10,11 +12,15 @@ namespace ShopHub.MVC.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        private IShoppingCartService _cartService;
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IShoppingCartService cartService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _cartService = cartService;
         }
 
         [HttpGet]
@@ -42,6 +48,7 @@ namespace ShopHub.MVC.Controllers
 
                 if (result.Succeeded)
                 {
+                    await _cartService.CreateCart(user.Id);
                     await _userManager.AddToRoleAsync(user, RoleEnum.Customer.ToString());
                     return RedirectToAction("Login", "Account");
                 }
@@ -69,6 +76,14 @@ namespace ShopHub.MVC.Controllers
 
                 if (result.Succeeded)
                 {
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    try
+                    {
+                        await _cartService.GetCart(userId);
+                    }
+                    catch (KeyNotFoundException ex) {
+                        await _cartService.CreateCart(userId);
+                    }
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);

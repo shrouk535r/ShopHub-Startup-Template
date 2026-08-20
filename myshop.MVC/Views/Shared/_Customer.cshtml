@@ -1,6 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using myshop.BLL.DTO;
+@using myshop.BLL.ExtensionMethods;
 @inject SignInManager<myshop.Entities.Models.ApplicationUser> SignInManager
 @inject UserManager<myshop.Entities.Models.ApplicationUser> UserManager
+@inject IHttpContextAccessor httpContextAccessor
+
 @{
     var appUser = await UserManager.GetUserAsync(User);
 }
@@ -14,7 +18,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <style>
         /* Theme: remap Bootstrap's own CSS variables so every btn/badge/link/border
                        component picks up the brand palette automatically - no component overrides needed. */
@@ -35,7 +40,10 @@
             --bs-border-radius-lg: .75rem;
         }
 
-        .text-body-muted {
+        #toast-container.toast-top-right {
+            top: 100px !important;
+            right: 12px !important;
+            .text-body-muted {
             color: #7a7f8b;
         }
 
@@ -122,23 +130,69 @@
                                 </div>
 
                                 <!-- Cart dropdown -->
+                                @{
+                                    var cart = httpContextAccessor.HttpContext?.Session.Get<ShoppingCartDto>(appUser.Id);
+                                    var count = cart?.Count ?? 0;
+                                }
+                                      
                                 <div class="dropdown">
-                                    <button class="btn btn-light position-relative" type="button"
+                                    <a href="@Url.Action("GetCart", "ShoppingCart", new { returnUrl = Context.Request.Path})"
+                                       class="btn btn-light position-relative" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-cart3 fs-5"></i>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartBadge">0</span>
-                                    </button>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartBadge">@count</span>
+                                    </a>
                                     <div class="dropdown-menu dropdown-menu-end shadow p-0" style="width:340px;max-width:88vw;">
                                         <h6 class="dropdown-header fw-bold text-dark border-bottom py-3 px-3 mb-0">Your Cart</h6>
-                                        <div class="px-3 cart-scroll" id="cartItemsWrap"></div>
-                                        <div class="border-top p-3">
-                                            <div class="d-flex justify-content-between fw-bold mb-3">
-                                                <span>Total</span>
-                                                <span id="cartTotal">Rp 0</span>
-                                            </div>
-                                            <button style="background-color:var(--bs-primary)" class="btn btn-primary w-100 mb-2" id="checkoutBtn" type="button">Checkout</button>
-                                            <button class="btn btn-outline-danger w-100" id="clearCartBtn" type="button">Clear Cart</button>
-                                        </div>
+                                        @{
+                                            if(cart == null)
+                                            {
+                                                TempData["ErrorMessage"] = "Cart Not Created";
+
+                                            }
+                                            else if(!cart.CartItems.Any())
+                                            {
+                                                 <div class="text-center text-body-muted py-4">
+                                                    <i class="bi bi-cart-x fs-2"></i>
+                                                    <p class="mt-2 mb-0 small">Your cart is empty</p>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="px-3 cart-scroll" id="cartItemsWrap">
+                                                @foreach(var item in cart.CartItems){
+                                                <div class="d-flex align-items-center gap-2 py-2 border-bottom cart-item" data-id="@item.Id">
+                                                    <img src=~/@item.productImg class="rounded object-fit-cover flex-shrink-0" style="width:50px;height:50px;" alt="@item.ProductName">
+                                                    <div class="flex-grow-1" style="min-width:0;">
+                                                        <p class="small fw-semibold mb-1 text-truncate">@item.ProductName</p>
+                                                        <p class="small text-primary fw-bold mb-1">@item.ProductPrice EGP</p>
+                                                        <div class="btn-group btn-group-sm" role="group">
+                                                            <a href="@Url.Action("DecreaseQty", "ShoppingCart", new { returnUrl = Context.Request.Path, cartItemId=item.Id })" 
+                                                            class="btn btn-outline-secondary qty-minus" type="button">&minus;</a>
+                                                            <button class="btn btn-outline-secondary disabled" tabindex="-1">@item.Quantity</button>
+                                                            <a href="@Url.Action("IncreaseQty", "ShoppingCart", new { returnUrl = Context.Request.Path, cartItemId = item.Id })"
+                                                         
+                                                            class="btn btn-outline-secondary qty-plus" type="button">+</a>
+                                                        </div>
+                                                    </div>
+                                                     <a href="@Url.Action("DeleteItem", "ShoppingCart", new { returnUrl = Context.Request.Path, cartItemId = item.Id })"
+                                                    class="btn btn-sm btn-outline-danger ci-delete flex-shrink-0" type="button">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                                }
+                                                </div>
+                                                <div class="border-top p-3">
+                                                    <div class="d-flex justify-content-between fw-bold mb-3">
+                                                        <span>Total</span>
+                                                        <span id="cartTotal">@cart.TotalPrice EGP</span>
+                                                    </div>
+                                                    <button style="background-color:var(--bs-primary)" class="btn btn-primary w-100 mb-2" id="checkoutBtn" type="button">Checkout</button>
+                                                    <a href="@Url.Action("ClearCart", "ShoppingCart", new { returnUrl = Context.Request.Path })" class="btn btn-outline-danger w-100" id="clearCartBtn" type="button">Clear Cart</a>
+                                                </div>
+                                                
+                                            }
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +210,14 @@
             </div>
         </div>
     </nav>
-<main>@RenderBody()</main>
+<main>
+
+        <partial name="_Toaster" />
+
+@RenderBody()
+
+</main>
+
     <!-- ============ FOOTER ============ -->
     <footer class="border-top pt-5 pb-4 mt-4">
         <div class="container">
@@ -192,93 +253,18 @@
             <div class="border-top mt-5 pt-3 text-body-muted small">2024 MyShop. All rights reserved</div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <script src="~/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/adminlte.min.js"></script>
+
+    <script src="//cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
     <script>
         (function(){
-                        // ---------------- CART RENDER ----------------
-            const cartItemsWrap = document.getElementById("cartItemsWrap");
-            const cartBadge = document.getElementById("cartBadge");
-            const cartTotalEl = document.getElementById("cartTotal");
-
-            function renderCart() {
-                cartBadge.textContent = cart.reduce((s, i) => s + i.qty, 0);
-
-                if (cart.length === 0) {
-                    cartItemsWrap.innerHTML = `
-                        <div class="text-center text-body-muted py-4">
-                            <i class="bi bi-cart-x fs-2"></i>
-                            <p class="mt-2 mb-0 small">Your cart is empty</p>
-                        </div>`;
-                } else {
-                    cartItemsWrap.innerHTML = cart.map(item => `
-                        <div class="d-flex align-items-center gap-2 py-2 border-bottom cart-item" data-id="${item.id}">
-                            <img src="${item.img}" class="rounded object-fit-cover flex-shrink-0" style="width:50px;height:50px;" alt="${item.name}">
-                            <div class="flex-grow-1" style="min-width:0;">
-                                <p class="small fw-semibold mb-1 text-truncate">${item.name}</p>
-                                <p class="small text-primary fw-bold mb-1">${formatRp(item.price)}</p>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button class="btn btn-outline-secondary qty-minus" type="button">&minus;</button>
-                                    <button class="btn btn-outline-secondary disabled" tabindex="-1">${item.qty}</button>
-                                    <button class="btn btn-outline-secondary qty-plus" type="button">+</button>
-                                </div>
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger ci-delete flex-shrink-0" type="button">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>`).join("");
-                }
-
-                const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-                cartTotalEl.textContent = formatRp(total);
-
-                cartItemsWrap.querySelectorAll(".cart-item").forEach(row => {
-                    const id = Number(row.dataset.id);
-                    row.querySelector(".qty-plus").addEventListener("click", () => {
-                        cart.find(c => c.id === id).qty++;
-                        renderCart();
-                    });
-                    row.querySelector(".qty-minus").addEventListener("click", () => {
-                        const it = cart.find(c => c.id === id);
-                        it.qty--;
-                        if (it.qty <= 0) cart = cart.filter(c => c.id !== id);
-                        renderCart();
-                    });
-                    row.querySelector(".ci-delete").addEventListener("click", () => {
-                        cart = cart.filter(c => c.id !== id);
-                        renderCart();
-                    });
-                });
-            }
-
-            document.getElementById("clearCartBtn").addEventListener("click", () => {
-                cart = [];
-                renderCart();
-            });
-
-            document.getElementById("checkoutBtn").addEventListener("click", () => {
-                if (cart.length === 0) return;
-                alert("Proceeding to checkout with total " + cartTotalEl.textContent);
-            });
-
-            renderCart();
-
-            // ---------------- AUTH STATE ----------------
-            const signedInBlock = document.getElementById("signedInBlock");
-            const signedOutBlock = document.getElementById("signedOutBlock");
-            const panelUserName = document.getElementById("panelUserName");
-            const panelUserEmail = document.getElementById("panelUserEmail");
-            const navUserName = document.getElementById("navUserName");
-            const avatarInitial = document.getElementById("avatarInitial");
-
-            
-            
-            // ---------------- MOBILE NAV (Bootstrap collapse) ----------------
-            // Auto-collapse the menu after tapping a link, using Bootstrap's own Collapse API.
             const mainNavEl = document.getElementById("mainNav");
             const bsCollapse = bootstrap.Collapse.getOrCreateInstance(mainNavEl, { toggle: false });
             mainNavEl.querySelectorAll(".nav-link").forEach(link => {

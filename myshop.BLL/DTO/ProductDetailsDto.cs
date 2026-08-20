@@ -26,5 +26,9 @@ namespace myshop.BLL.DTO
         [DisplayName("Category Name")]
         public string CategoryName { get; set; }
 
+        public int ReviewsCount { get; set; }
+        public decimal ReviewRating { get; set; }
+
+        public List<ReviewDto> Reviews { get; set; }
     }
 }

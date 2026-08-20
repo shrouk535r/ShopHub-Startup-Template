@@ -1,9 +1,17 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
+    const isArchived =
+        document.getElementById("mytable")
+            .dataset.isarchieved.toLowerCase()==="true"
+    debugger;
 
     $("#mytable").DataTable({
         ajax: {
             url: "/Product/GetData",
             type: "GET",
+            data: {
+                IsArchieved: isArchived
+            },
             dataSrc: "data"
         },
         columns: [
@@ -31,7 +39,8 @@
             {
                 data: "id",
                 render: function (id) {
-                    return `
+                    if (!isArchived) {
+                        return `
                         <a href="/Product/Edit/${id}" class="btn btn-success btn-sm">
                             <i class="fa-solid fa-pen"></i>
                         </a>
@@ -40,6 +49,14 @@
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     `;
+                    }
+                    else {
+                        return `
+                            <button onclick="Restore('/Product/Restore/${id}')" class="btn btn-success btn-sm">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        `;
+                    }
                 }
             }
         ],
@@ -81,6 +98,26 @@ function Delete(url) {
 
         }
 
+    });
+
+}
+function Restore(url) {
+    $.ajax({
+        url: url,
+        type: "POST",
+        success: function (data) {
+
+            if (data.success) {
+
+                $('#mytable').DataTable().ajax.reload();
+
+                Swal.fire("Restored!", data.message, "success");
+            }
+            else {
+
+                Swal.fire("Error!", data.message, "error");
+            }
+        }
     });
 
 }

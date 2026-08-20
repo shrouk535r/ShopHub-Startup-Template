@@ -34,6 +34,11 @@ namespace myshop.DAL
             services.AddScoped<IProductRepo, ProductRepo>();
             services.AddScoped<ICategoryRepo, CategoryRepo>();
             services.AddScoped<IUnitOfWork, UnitOfwork>();
+            services.AddScoped<ICartItemRepo, CartItemRepo>();
+            services.AddScoped<ICartRepo, CartRepo>();
+            services.AddScoped<IOrderItemRepo, OrderItemRepo>();
+            services.AddScoped<IOrderRepo, OrderRepo>();
+            services.AddScoped<IOrderHeaderRepo, OrderHeaderRepo>();
 
 
 

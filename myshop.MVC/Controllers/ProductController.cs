@@ -26,17 +26,25 @@ namespace myshop.MVC.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(bool IsArchieved=false)
         {
+            ViewBag.IsArchieved = IsArchieved;
             return View();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetData()
+        public async Task<IActionResult> GetData(bool IsArchieved=false)
         {
-            var products = await _productService.GetProducts();
-
-            return Json(new { data =  products});
+            IEnumerable<ProductDto> products;
+            if (!IsArchieved)
+            {
+                products = await _productService.GetProducts();
+            }
+            else
+            {
+                products = await _productService.GetArchievedProducts();
+            }
+            return Json(new { data = products, IsArchieved });
         }
         [HttpGet]
         public async Task<IActionResult> GetDetails(int ?id)
@@ -146,7 +154,23 @@ namespace myshop.MVC.Areas.Admin.Controllers
 
             return Json(new { success = true, message = "file has been Deleted" });
         }
+        [HttpPost]
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null)
+                return Json(new { success = false, message = "Error while Restoring" });
 
+            try
+            {
+                await _productService.RestoreProduct(id ?? 0);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = true, message = "file has been Restore Successfully" });
+        }
 
     }
 }

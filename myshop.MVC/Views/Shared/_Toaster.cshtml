@@ -24,3 +24,23 @@
         toastr.error("@TempData["Delete"]")
     </script>
 }
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        toastr.success("@TempData["SuccessMessage"]")
+       
+    </script>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+   
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        toastr.error("@TempData["ErrorMessage"]")
+        @{TempData["ErrorMessage"]= null;}
+    </script>
+}

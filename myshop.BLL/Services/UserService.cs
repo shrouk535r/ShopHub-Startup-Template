@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using myshop.BLL.DTO;
 using myshop.BLL.Services.IServices;
 using myshop.DAL.Enums;
+using myshop.DAL.Repositories.IRepositories;
 using myshop.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,11 @@ namespace myshop.BLL.Services
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public UserService(UserManager<ApplicationUser> userManager)
+        private ICartRepo _cartRepo;
+        public UserService(UserManager<ApplicationUser> userManager, ICartRepo cartRepo)
         {
             _userManager = userManager;
+            _cartRepo = cartRepo;
         }
 
         public async Task<IEnumerable<UserDto>> GetAllUsers()

@@ -33,41 +33,45 @@ namespace myshop.BLL.Services
             var productsDto = products.Select(P => _mapper.Map<ProductDto>(P)).ToList();
             return productsDto;
         }
-        public async Task<ICollection<ProductDto>> GetFilteredAndSortedProducts(int? Pagenum,SortEnum? order,string SearchedText)
+        public async Task<ICollection<ProductDto>> GetArchievedProducts()
         {
-            int pageSize = 10;
-            var products = await _unitOfWork.ProductRepository.GetAll(p => p.Category);
-            int skippedPages = (Pagenum??1 - 1) * pageSize;
-            switch(order)
-            {
-                case SortEnum.NameAsec:
-                    products= products.OrderBy(p => p.Name).ToList();
-                    break;
-                case SortEnum.NameDesc:
-                    products = products.OrderByDescending(p => p.Name).ToList();
-                    break;
-                case SortEnum.PriceAsec:
-                    products = products.OrderBy(p => p.Price).ToList();
-                    break;
-                case SortEnum.PriceDesc:
-                    products = products.OrderByDescending(p => p.Price).ToList();
-                    break;
-                default:
-                    break;
-            }
-            if (!string.IsNullOrEmpty(SearchedText))
-                products = products.Where(p => p.Name.ToLower().Contains(SearchedText.ToLower()) || p.Description.ToLower().Contains(SearchedText.ToLower())).ToList();
-            products = products.Skip(skippedPages).Take(pageSize).ToList();
+            var products = await _unitOfWork.ProductRepository.GetArchievedProducts();
             var productsDto = products.Select(P => _mapper.Map<ProductDto>(P)).ToList();
-
             return productsDto;
         }
-        
+        public async Task<(ICollection<ProductDto> items, int total)> GetFilteredAndSortedProducts(int? Pagenum,SortEnum? order,string SearchedText)
+        {
+            int pageSize = 8;
+            Func<IQueryable<Product>, IOrderedQueryable<Product>>? orderBy = order switch 
+            {
+                SortEnum.NameAsec => q => q.OrderBy(p => p.Name),
+                SortEnum.NameDesc => q => q.OrderByDescending(p => p.Name),
+                SortEnum.PriceAsec => q => q.OrderBy(p => p.Price),
+                SortEnum.PriceDesc => q => q.OrderByDescending(p => p.Price),
+                _ => null            
+            };
+            var (products, totalcount) = await _unitOfWork.ProductRepository.GetFilteredProducts(pageSize, Pagenum ?? 1, SearchedText ?? "",orderBy);
+
+
+            var productsDto = products.Select(P => _mapper.Map<ProductDto>(P)).ToList();
+
+            return (productsDto,totalcount);
+        }
+        public async Task RestoreProduct(int ProductId)
+        {
+            var product = await _unitOfWork.ProductRepository.GetArchievedProductBbyId(ProductId);
+            if (product == null)
+                throw new Exception("Product with This Id Not Found");
+            if(!product.IsDeleted)
+                throw new Exception("Product with This Id Not Deleted");
+            await _unitOfWork.ProductRepository.RestoreProduct(product);
+            await _unitOfWork.Save();
+        }
 
 
         public async Task<ProductDetailsDto> GetProductDetails(int ProductId)
         {
-            var product=await _unitOfWork.ProductRepository.GetById(ProductId, p => p.Category);
+            var product=await _unitOfWork.ProductRepository.GetProductDetailById(ProductId);
             if (product == null)
             {
                 throw new Exception("there is no Product for this Id");

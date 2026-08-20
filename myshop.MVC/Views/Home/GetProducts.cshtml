@@ -1,0 +1,184 @@
+﻿@model ICollection<myshop.BLL.DTO.ProductDto>
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Customer.cshtml";
+    var pages = (int)Math.Ceiling(ViewBag.Total / 8.0);
+}
+
+<!-- Page-specific styles: consider moving these into your shared site.css so every
+     listing page can reuse them, instead of repeating this block per view. -->
+<style>
+    .bg-cream { background-color: var(--bs-primary-second, #f7f1e6); }
+    .price-old { text-decoration: line-through; }
+    .img-overlay {
+        background: rgba(0,47,122,.55);
+        opacity: 0;
+        transition: opacity .2s ease;
+    }
+    .hover-target:hover .img-overlay { opacity: 1; }
+    .page-banner {
+        min-height: 260px;
+        background: linear-gradient(rgba(0,47,122,.6), rgba(0,47,122,.6)),
+                    url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+    }
+</style>
+
+<!-- ============ PAGE BANNER ============ -->
+<section class="page-banner d-flex align-items-center text-center text-white">
+    <div class="container">
+        <h1 class="fw-bold mb-2">Products</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a class="link-light text-decoration-none" href="/">Home</a></li>
+                <li class="breadcrumb-item active text-white-50" aria-current="page">Products</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- ============ TOOLBAR: results count + search ============ -->
+<section class="container mt-4">
+    @using (Html.BeginForm("GetProducts", "Home", new { Pagenum = 1, order = ViewBag.order }, FormMethod.Get))
+    {
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <p class="text-body-muted mb-0">Showing 1&ndash;@Model.Count of @ViewBag.Total results</p>
+        
+            <div class="input-group" style="max-width:280px;">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                <input value="@ViewBag.SearchedText" type="search" class="form-control border-start-0" id="productSearch" placeholder="Search" name="SearchedText">
+            </div>
+        
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label class="col-form-label" for="sortSelect">Sort by</label>
+            </div>
+            <div class="col-auto">
+                    <select id="sortSelect" class=" form-select" name="order" onchange="this.form.submit()">
+                    <option value="0" selected="@((int)ViewBag.order==0)">Default</option>
+                    <option value="1" selected="@((int)ViewBag.order==1)">Name: A–Z</option>
+                    <option value="2" selected="@((int)ViewBag.order==2)">Name: Z–A</option>
+                    <option value="3" selected="@((int)ViewBag.order==3)">Lowest Price</option>
+                    <option value="4" selected="@((int)ViewBag.order==4)">Highest Price</option>
+                    
+                </select>
+            </div>
+        </div>
+     </div>
+        <input type="submit" style="display:none" />
+
+     }
+</section>
+
+<!-- ============ PRODUCT GRID ============ -->
+<section class="container mt-4" id="products">
+    <div class="row g-3">
+        @{
+            foreach (var p in Model)
+            {
+                <div class=" col-md-4 col-lg-3">
+                    <div class="card h-100 border shadow-sm">
+                        <div class="position-relative ratio ratio-1x1 hover-target">
+                            <img src="/@p.Img" class="object-fit-cover" alt="@p.Name">
+                           
+                            <div class="img-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                                <a href ="@Url.Action("AddItem", "ShoppingCart", new { returnUrl = Context.Request.Path, ProductId = @p.Id })"
+                                style="background-color:var(--bs-primary-second); color:var(--bs-primary); border-radius:10px" class="btn btn-light btn-sm fw-semibold add-to-cart-btn">Add to cart</a>
+
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold mb-0 small">@p.Name</h6>
+                            <span class="badge rounded-pill text-bg-info">@p.CategoryName</span>
+
+                            <p class="card-text text-body-muted small mb-2">@string.Join(" ", (p.Description.Split(" ").Take(7)))</p>
+                            <p class="fw-bold text-primary mb-0 small">
+
+                                @p.Price &nbsp;$
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- ============ PAGINATION ============ -->
+    <nav class="d-flex justify-content-center my-5" aria-label="Product pagination">
+        <div class="d-flex gap-2">
+            @for (int i = 1; i <= pages; i++)
+            {
+                if (i == ViewBag.Pagenum)
+                {
+                    <a href="#" class="btn btn-primary rounded-3 px-3">@i</a>
+                }
+                else
+                {
+                    <a asp-action="GetProducts"
+                    asp-controller="Home"
+                    asp-route-Pagenum="@i"
+                    asp-route-order="@ViewBag.order"
+                    asp-route-SearchedText="@ViewBag.SearchedText"
+                    class="btn btn-light rounded-3 px-3">@i</a>
+
+                }
+            }
+            @if (ViewBag.Pagenum < pages)
+            {
+                <a asp-action="GetProducts"
+                   asp-controller="Home"
+                   asp-route-Pagenum="@(ViewBag.Pagenum +1)"
+                   asp-route-order="@ViewBag.order"
+                   asp-route-SearchedText="@ViewBag.SearchedText"
+                   class="btn btn-light rounded-3 px-4">Next</a>
+            }
+            @if (ViewBag.Pagenum > pages && ViewBag.Pagenum != 1)
+            {
+                <a asp-action="GetProducts"
+                   asp-controller="Home"
+                   asp-route-Pagenum="@(ViewBag.Pagenum - 1)"
+                   asp-route-order="@ViewBag.order"
+                   asp-route-SearchedText="@ViewBag.SearchedText"
+                   class="btn btn-light rounded-3 px-4">Pervious</a>
+            }
+        </div>
+
+    </nav>
+</section>
+
+<!-- ============ FEATURES STRIP ============ -->
+<section class="bg-cream py-5">
+    <div class="container">
+        <div class="row g-4 text-center text-md-start">
+            <div class="col-md-4 d-flex align-items-center gap-3 justify-content-center justify-content-md-start">
+                <i class="bi bi-trophy fs-1"></i>
+                <div>
+                    <h6 class="fw-bold mb-0">High Quality</h6>
+                    <p class="text-body-muted small mb-0">crafted from top materials</p>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center gap-3 justify-content-center justify-content-md-start">
+                <i class="bi bi-patch-check fs-1"></i>
+                <div>
+                    <h6 class="fw-bold mb-0">Warranty Protection</h6>
+                    <p class="text-body-muted small mb-0">Over 2 years</p>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center gap-3 justify-content-center justify-content-md-start">
+                <i class="bi bi-headset fs-1"></i>
+                <div>
+                    <h6 class="fw-bold mb-0">24 / 7 Support</h6>
+                    <p class="text-body-muted small mb-0">Dedicated support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Declared at top level (not inside an IIFE) so these stay on `window` and are
+        // already defined by the time the layout's cart/auth script block runs after this.
+    </script>
+}

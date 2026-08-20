@@ -17,12 +17,14 @@ namespace myshop.MVC.Controllers
         private ICategoryService _categoryService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private IShoppingCartService _cartService;
 
         public HomeController(ILogger<HomeController> logger,
             ICategoryService categoryService,
             IProductService productService,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager
+            SignInManager<ApplicationUser> signInManager,
+        IShoppingCartService cartService
             )
         {
             _logger = logger;
@@ -30,6 +32,7 @@ namespace myshop.MVC.Controllers
             _categoryService = categoryService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _cartService = cartService;
         }
 
         public async Task<IActionResult> Index()
@@ -39,11 +42,20 @@ namespace myshop.MVC.Controllers
                 if (User.IsInRole("Admin"))
                     return (RedirectToAction("Index", "Product"));
                 var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                try
+                {
+                    var cart = await _cartService.GetCart(CustomerId);
+
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = ex.Message;
+                }
 
             }
 
             var categories = (await _categoryService.GetCategories()).Take(3);
-            var products = (await _productService.GetProducts()).Take(8);
+            var products = (await _productService.GetProducts()).Take(6);
             HomeVM homeVM = new HomeVM
             {
                 Products = products,
@@ -51,10 +63,14 @@ namespace myshop.MVC.Controllers
             };
             return View(homeVM);
         }
-        public async Task<IActionResult> Products(int? Pagenum, SortEnum? order,string SearchedText)
+        public async Task<IActionResult> GetProducts(int? Pagenum, SortEnum? order,string SearchedText)
         {
-            var products = _productService.GetFilteredAndSortedProducts(Pagenum, order, SearchedText);
-            return View();
+            var (products,totalcount) = await _productService.GetFilteredAndSortedProducts(Pagenum, order, SearchedText);
+            ViewBag.Pagenum = Pagenum ?? 1;
+            ViewBag.order = order ?? 0;
+            ViewBag.SearchedText = SearchedText;
+            ViewBag.Total=totalcount;
+            return View(products);
         }
         public IActionResult Privacy()
         {

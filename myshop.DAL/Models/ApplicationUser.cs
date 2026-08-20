@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Identity.Client;
 using myshop.DAL.Enums;
+using myshop.DAL.Models;
+using myshop.DAL.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,19 +13,24 @@ using System.Threading.Tasks;
 
 namespace myshop.Entities.Models
 {
-    public class ApplicationUser:IdentityUser
+    public class ApplicationUser : IdentityUser,ISoftDelete
     {
-        [Required]
         [DisplayName("First Name")]
-        [MinLength(3,ErrorMessage = "First name must contain at least 3 characters.")]
+        [MinLength(3, ErrorMessage = "First name must contain at least 3 characters.")]
         public string FName { get; set; }
         [DisplayName("Last Name")]
-        [MinLength(3,ErrorMessage = "Last name must contain at least 3 characters.")]
+        [MinLength(3, ErrorMessage = "Last name must contain at least 3 characters.")]
         public string LName { get; set; }
         [DisplayName("Name")]
         public string FullName => $"{FName} {LName}";
         public string Address { get; set; }
         public string City { get; set; }
         public RoleEnum Role { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateOnly? DeletedAt { get; set; }
+        public ICollection<Review>? Reviews {get; set;}
+        public ShoppingCart? Cart { get; set; }
+        public ICollection<OrderHeader> Orders { get; set;}
+
     }
 }

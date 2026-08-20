@@ -20,7 +20,7 @@ namespace myshop.DAL.Repositories
         {
             if (entity != null)
             {
-                _context.Set<TEntity>().Remove(entity);
+                 _context.Set<TEntity>().Remove(entity);
                 return true;
             }
             return false;
